@@ -6,8 +6,8 @@ import grpc
 import numpy as np
 from google.protobuf.empty_pb2 import Empty
 
-import faiss_grpc.faiss_pb2 as faiss_pb2 # isort:skip
-import faiss_grpc.faiss_pb2_grpc as faiss_pb2_grpc # isort:skip
+import faiss_grpc_client.faiss_pb2 as faiss_pb2 # isort:skip
+import faiss_grpc_client.faiss_pb2_grpc as faiss_pb2_grpc # isort:skip
 VectorLike = Union[List[float], np.ndarray]
 
 class GrpcClient:
