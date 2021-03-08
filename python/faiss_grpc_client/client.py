@@ -19,13 +19,13 @@ class GrpcClient:
     def stub(self) -> faiss_pb2_grpc.FaissServiceStub:
         return self._stub
 
-    def search(self, query: VectorLike, k: int) -> None:
+    def search(self,  collection: str = None, query: VectorLike = [], k: int = 1) -> None:
         queries: List[faiss_pb2.Vector] = []
         for i in range(query.shape[0]):
             vec = faiss_pb2.Vector(val=query[i])
             queries.append(vec)
         
-        req = faiss_pb2.SearchRequest(collection = "test", queries=queries, k=k)
+        req = faiss_pb2.SearchRequest(collection = collection, queries=queries, k=k)
         res = self.stub.Search(req)
         result = []
         for _, mn in enumerate(res.multi_neighbors):
@@ -35,7 +35,7 @@ class GrpcClient:
             result.append(sub)
         return result
 
-    def insert(self, qbs: List[dict]) -> str:
+    def insert(self, collection: str = None, qbs: List[dict] = []) -> str:
         queries: List[faiss_pb2.Vector] = []
         mul_entities: List[faiss_pb2.Entities] = []
         ids: List[int] = []
@@ -51,15 +51,15 @@ class GrpcClient:
             mul_entities.append(faiss_pb2.Entities(entities=entities))
             ids.append(q['id'])
         
-        req = faiss_pb2.InsertRequest(collection = "test", vectors=queries, ids=ids, multi_entities=mul_entities)
+        req = faiss_pb2.InsertRequest(collection = collection, vectors=queries, ids=ids, multi_entities=mul_entities)
         res = self.stub.Insert(req)
         list_ids = []
         for _id in res.id:
             list_ids.append(_id)
         return "OK", list_ids
     
-    def remove(self, ids: VectorLike) -> list:
-        req = faiss_pb2.RemoveRequest(collection = "test", ids=ids)
+    def remove(self, collection: str = None,  ids: VectorLike = []) -> list:
+        req = faiss_pb2.RemoveRequest(collection = collection, ids=ids)
         res = self.stub.Remove(req)
         list_ids = []
         for _id in res.ids:
