@@ -11,8 +11,10 @@ import faiss_grpc_client.faiss_pb2_grpc as faiss_pb2_grpc # isort:skip
 VectorLike = Union[List[float], np.ndarray]
 
 class GrpcClient:
-    def __init__(self, server_host : str = '0.0.0.0' , server_post:int = 50051) -> None:
-        channel = grpc.insecure_channel('{}:{}'.format(server_host, server_post))
+    def __init__(self, server_host : str = '0.0.0.0' , server_port:int = 50051) -> None:
+        options = [('grpc.max_send_message_length', 512 * 1024 * 1024), ('grpc.max_receive_message_length', 512 * 1024 * 1024)]
+        channel = grpc.insecure_channel('{}:{}'.format(server_host, server_port, options=options))
+        
         self._stub = faiss_pb2_grpc.FaissServiceStub(channel)
 
     @property
